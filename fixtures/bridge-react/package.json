@@ -1,0 +1,12 @@
+{
+  "name": "bridge-react-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter remote build && pnpm --filter host build && node scripts/check-router-alias.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

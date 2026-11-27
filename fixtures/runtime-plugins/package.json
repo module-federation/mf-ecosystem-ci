@@ -1,0 +1,12 @@
+{
+  "name": "mf-fixture-runtime-plugins",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter rp-remote run build && pnpm --filter rp-host run build",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

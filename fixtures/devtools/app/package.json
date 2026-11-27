@@ -1,0 +1,20 @@
+{
+  "name": "dt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rsbuild build"
+  },
+  "dependencies": {
+    "@module-federation/devtools": "^2.9.4",
+    "@module-federation/playground": "^0.1.4",
+    "@module-federation/runtime": "^2.9.4",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@module-federation/runtime-tools": "^2.9.4",
+    "@rsbuild/core": "2.1.4",
+    "@rsbuild/plugin-react": "2.1.0"
+  }
+}

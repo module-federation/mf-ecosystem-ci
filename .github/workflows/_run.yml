@@ -1,0 +1,157 @@
+# Reusable: build + pack one upstream stack once, then fan out one job per suite.
+name: run
+
+on:
+  workflow_call:
+    inputs:
+      stack:
+        description: core | vite
+        type: string
+        required: true
+      refType:
+        description: branch | tag | commit | pkg-pr-new | release
+        type: string
+        default: branch
+      ref:
+        description: branch/tag/sha, or the npm version / dist-tag for release
+        type: string
+        default: main
+      repo:
+        description: upstream repository override (fork), empty for the stack default
+        type: string
+        default: ''
+      suites:
+        description: space separated suite names, or "-" for every suite of the stack
+        type: string
+        default: '-'
+
+permissions:
+  contents: read
+
+env:
+  # Prebuilt tarballs live here; run-suites reads workspace/tarballs/<stack>/manifest.json.
+  TARBALLS: workspace/tarballs/${{ inputs.stack }}
+
+jobs:
+  prepare:
+    name: build ${{ inputs.stack }} (${{ inputs.refType }} ${{ inputs.ref }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      suites: ${{ steps.suites.outputs.suites }}
+      overrideArgs: ${{ steps.mode.outputs.args }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - id: suites
+        name: Resolve suites
+        env:
+          STACK: ${{ inputs.stack }}
+          SUITES: ${{ inputs.suites }}
+        run: |
+          if [ -z "$SUITES" ] || [ "$SUITES" = "-" ]; then
+            echo "suites=$(node ecosystem-ci.ts list --stack "$STACK" --json)" >> "$GITHUB_OUTPUT"
+          else
+            echo "suites=$(node -e 'console.log(JSON.stringify(process.argv.slice(1)))' $SUITES)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - id: mode
+        name: Resolve override source
+        env:
+          REF_TYPE: ${{ inputs.refType }}
+          REF: ${{ inputs.ref }}
+        run: |
+          case "$REF_TYPE" in
+            release)    echo "args=--release $REF" >> "$GITHUB_OUTPUT" ;;
+            pkg-pr-new) echo "args=--commit $REF" >> "$GITHUB_OUTPUT" ;;
+            branch|tag|commit) echo "args=" >> "$GITHUB_OUTPUT" ;;
+            *) echo "unknown refType $REF_TYPE"; exit 1 ;;
+          esac
+
+      - name: Build and pack ${{ inputs.stack }}
+        if: contains(fromJSON('["branch","tag","commit"]'), inputs.refType)
+        env:
+          STACK: ${{ inputs.stack }}
+          REF_TYPE: ${{ inputs.refType }}
+          REF: ${{ inputs.ref }}
+          REPO: ${{ inputs.repo }}
+        run: |
+          node ecosystem-ci.ts build-stack --stack "$STACK" --"$REF_TYPE" "$REF" ${REPO:+--repo "$REPO"}
+
+      - name: Upload tarballs
+        if: contains(fromJSON('["branch","tag","commit"]'), inputs.refType)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tarballs-${{ inputs.stack }}
+          path: ${{ env.TARBALLS }}
+          retention-days: 3
+          if-no-files-found: error
+
+  coverage:
+    name: ${{ inputs.stack }} / coverage
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Download tarballs
+        if: needs.prepare.outputs.overrideArgs == ''
+        uses: actions/download-artifact@v4
+        with:
+          name: tarballs-${{ inputs.stack }}
+          path: ${{ env.TARBALLS }}
+      # Fails when the upstream publishes a package that no suite exercises.
+      - name: Every published package has a suite
+        env:
+          STACK: ${{ inputs.stack }}
+          REPO: ${{ inputs.repo }}
+        run: node ecosystem-ci.ts coverage --stack "$STACK" ${REPO:+--repo "$REPO"}
+
+  suite:
+    name: ${{ inputs.stack }} / ${{ matrix.suite }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ${{ fromJSON(needs.prepare.outputs.suites) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Download tarballs
+        if: needs.prepare.outputs.overrideArgs == ''
+        uses: actions/download-artifact@v4
+        with:
+          name: tarballs-${{ inputs.stack }}
+          path: ${{ env.TARBALLS }}
+
+      # Electron's sandbox needs unprivileged user namespaces, which Ubuntu 24.04 restricts.
+      - name: Allow the Electron sandbox
+        if: matrix.suite == 'electron'
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Run ${{ matrix.suite }}
+        env:
+          STACK: ${{ inputs.stack }}
+          SUITE: ${{ matrix.suite }}
+          REPO: ${{ inputs.repo }}
+          OVERRIDE_ARGS: ${{ needs.prepare.outputs.overrideArgs }}
+        run: node ecosystem-ci.ts run-suites --stack "$STACK" $OVERRIDE_ARGS ${REPO:+--repo "$REPO"} "$SUITE"

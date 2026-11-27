@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    // As in core's tsconfig.base.json. The lib/*.d.ts files are tsc output of webpack's JS and
+    // lean on webpack-internal globals (EXPECTED_ANY, ...), so they are not lib-checkable on
+    // their own; src/ guards against them silently degrading to `any` with @ts-expect-error.
+    "skipLibCheck": true,
+    "types": ["node"],
+    // The same aliasing core uses (packages/storybook-addon/tsconfig.json,
+    // packages/enhanced/tsconfig.spec.json), pointed at the published package.
+    "paths": {
+      "webpack": ["./node_modules/@module-federation/webpack-type/types.d.ts"],
+      "webpack/*": [
+        "./node_modules/@module-federation/webpack-type/lib/*.d.ts",
+        "./node_modules/@module-federation/webpack-type/*"
+      ]
+    }
+  },
+  "include": ["src"]
+}

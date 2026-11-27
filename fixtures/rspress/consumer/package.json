@@ -1,0 +1,17 @@
+{
+  "name": "docs-consumer",
+  "private": true,
+  "scripts": {
+    "build": "rspress build"
+  },
+  "dependencies": {
+    "@module-federation/rspress-plugin": "^2.9.4",
+    "@module-federation/runtime-tools": "^2.9.4",
+    "@rspress/core": "2.0.14",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.6"
+  }
+}

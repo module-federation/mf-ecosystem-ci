@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    // The extractor copies the packages the remote's d.ts import (zod, @types/react) but not
+    // their own type dependencies (csstype, prop-types), so lib checking those is out of scope.
+    "skipLibCheck": true,
+    "types": [],
+    "paths": {
+      "*": ["./@mf-types/*"]
+    }
+  },
+  "include": ["src"]
+}

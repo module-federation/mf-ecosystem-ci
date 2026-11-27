@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # New packages show up on npm without a PR here; catch them within a day.
+  schedule:
+    - cron: '0 4 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Every published package has a suite (against upstream main)
+        run: |
+          node ecosystem-ci.ts coverage --stack core
+          node ecosystem-ci.ts coverage --stack vite
+      - name: Every @module-federation/* package on npm is tracked
+        run: node ecosystem-ci.ts scope
+      - name: Every suite module loads
+        run: |
+          for stack in core vite; do
+            node ecosystem-ci.ts list --stack "$stack" --json
+            for suite in $(node ecosystem-ci.ts list --stack "$stack"); do
+              node -e "import('./tests/$stack/$suite.ts').then(m => { if (typeof m.test !== 'function') throw new Error('$stack/$suite has no test export') })"
+            done
+          done

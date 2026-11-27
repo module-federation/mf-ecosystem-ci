@@ -1,0 +1,12 @@
+{
+  "name": "bridge-vue3-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter remote build && pnpm --filter host build",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

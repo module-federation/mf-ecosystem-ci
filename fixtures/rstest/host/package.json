@@ -1,0 +1,22 @@
+{
+  "name": "rstest-fixture-host",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "rstest run -c rstest.config.ts"
+  },
+  "devDependencies": {
+    "@module-federation/rsbuild-plugin": "^2.9.4",
+    "@module-federation/rstest": "^2.9.4",
+    "@module-federation/runtime-tools": "^2.9.4",
+    "@rsbuild/core": "2.1.4",
+    "@rsbuild/plugin-react": "2.1.0",
+    "@rstest/core": "0.11.6",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/react": "15.0.7",
+    "jsdom": "20.0.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "rstest-fixture-remote": "workspace:*"
+  }
+}

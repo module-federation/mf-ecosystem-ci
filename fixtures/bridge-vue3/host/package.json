@@ -1,0 +1,22 @@
+{
+  "name": "host",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rsbuild build",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "@module-federation/bridge-shared": "^2.9.0",
+    "@module-federation/bridge-vue3": "^2.9.0",
+    "@module-federation/enhanced": "^2.9.0",
+    "vue": "^3.4.19",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@module-federation/rsbuild-plugin": "^2.9.0",
+    "@module-federation/runtime-tools": "^2.9.0",
+    "@rsbuild/core": "2.1.4",
+    "@rsbuild/plugin-vue": "^2.0.1"
+  }
+}

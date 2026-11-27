@@ -1,0 +1,40 @@
+{
+  "name": "host",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm run build:rnc && pnpm run build:rock && pnpm run build:rnef",
+    "build:rnc": "react-native bundle-mf-host --platform android --dev false --entry-file index.js --bundle-output dist/rnc/android/index.android.bundle --sourcemap-output dist/rnc/android/index.android.bundle.map",
+    "build:rock": "rock bundle-mf-host --platform android --dev false --entry-file index.js --bundle-output dist/rock/android/index.android.bundle --sourcemap-output dist/rock/android/index.android.bundle.map",
+    "build:rnef": "rnef bundle-mf-host --platform android --dev false --entry-file index.js --bundle-output dist/rnef/android/index.android.bundle --sourcemap-output dist/rnef/android/index.android.bundle.map"
+  },
+  "dependencies": {
+    "lodash": "4.18.1",
+    "react": "19.1.0",
+    "react-native": "0.80.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/runtime": "^7.25.0",
+    "@module-federation/metro": "^2.9.4",
+    "@module-federation/metro-plugin-rnc-cli": "^2.9.4",
+    "@module-federation/metro-plugin-rnef": "^2.9.4",
+    "@module-federation/metro-plugin-rock": "^2.9.4",
+    "@module-federation/runtime": "^2.9.4",
+    "@react-native-community/cli": "19.1.2",
+    "@react-native-community/cli-platform-android": "19.1.2",
+    "@react-native/babel-preset": "0.80.0",
+    "@react-native/metro-config": "0.80.0",
+    "@rnef/cli": "0.7.28",
+    "@rnef/platform-android": "0.7.28",
+    "@rnef/plugin-metro": "0.7.28",
+    "@rock-js/platform-android": "0.14.1",
+    "@rock-js/plugin-metro": "0.14.1",
+    "metro": "0.82.5",
+    "metro-config": "0.82.5",
+    "metro-file-map": "0.82.5",
+    "metro-resolver": "0.82.5",
+    "metro-source-map": "0.82.5",
+    "rock": "0.14.1"
+  }
+}

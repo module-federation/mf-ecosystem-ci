@@ -1,0 +1,5 @@
+packages:
+  - provider
+  - consumer
+onlyBuiltDependencies:
+  - core-js

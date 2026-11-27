@@ -1,0 +1,21 @@
+{
+  "name": "mf-ecosystem-ci-fixture-esbuild",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@module-federation/esbuild": "^0.0.118",
+    "@module-federation/runtime": "^2.9.4",
+    "@module-federation/webpack-bundler-runtime": "^2.9.4",
+    "@playwright/test": "1.64.1",
+    "es-module-shims": "1.5.17",
+    "esbuild": "0.28.1"
+  }
+}
