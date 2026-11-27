@@ -1,0 +1,8 @@
+{
+  "name": "mf-ecosystem-ci-fixture-tooling",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "create-module-federation": "^2.9.4"
+  }
+}

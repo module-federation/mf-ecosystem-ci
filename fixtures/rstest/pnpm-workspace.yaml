@@ -1,0 +1,5 @@
+packages:
+  - remote
+  - host
+onlyBuiltDependencies:
+  - core-js

@@ -1,0 +1,6 @@
+packages:
+  - remote
+  - host
+  - webpack-types
+  # filled by create-module-federation before install (see tests/core/fixture-tooling.ts)
+  - scaffolded/*

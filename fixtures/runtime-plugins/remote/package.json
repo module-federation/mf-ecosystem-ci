@@ -1,0 +1,13 @@
+{
+  "name": "rp-remote",
+  "private": true,
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "@module-federation/enhanced": "^2.9.4",
+    "@module-federation/runtime-tools": "^2.9.4",
+    "webpack": "5.104.1",
+    "webpack-cli": "5.1.4"
+  }
+}

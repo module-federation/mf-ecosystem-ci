@@ -1,0 +1,9 @@
+{
+  "name": "mf-ecosystem-ci-fixture-metro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter ./mini run build && pnpm --filter ./host run build",
+    "test": "node verify.mjs"
+  }
+}

@@ -1,0 +1,57 @@
+name: ecosystem-ci
+
+on:
+  schedule:
+    - cron: '0 5 * * 1-5' # weekdays 05:00 UTC, against each stack's main branch
+  workflow_dispatch:
+    inputs:
+      stack:
+        description: upstream to test
+        type: choice
+        options: [core, vite]
+        default: core
+      refType:
+        description: how to resolve the upstream packages
+        type: choice
+        options: [branch, tag, commit, pkg-pr-new, release]
+        default: branch
+      ref:
+        description: branch / tag / sha (or npm version / dist-tag for release)
+        type: string
+        default: main
+      repo:
+        description: upstream fork as owner/name (empty = official repo)
+        type: string
+        default: ''
+      suites:
+        description: space separated suites, "-" for all (see `pnpm list`)
+        type: string
+        default: '-'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ inputs.stack }}-${{ inputs.ref }}-${{ inputs.suites }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+
+jobs:
+  core:
+    if: github.event_name == 'schedule' || inputs.stack == 'core'
+    uses: ./.github/workflows/_run.yml
+    with:
+      stack: core
+      refType: ${{ inputs.refType || 'branch' }}
+      ref: ${{ inputs.ref || 'main' }}
+      repo: ${{ inputs.repo || '' }}
+      suites: ${{ inputs.suites || '-' }}
+
+  vite:
+    if: github.event_name == 'schedule' || inputs.stack == 'vite'
+    uses: ./.github/workflows/_run.yml
+    with:
+      stack: vite
+      refType: ${{ inputs.refType || 'branch' }}
+      ref: ${{ inputs.ref || 'main' }}
+      repo: ${{ inputs.repo || '' }}
+      suites: ${{ inputs.suites || '-' }}

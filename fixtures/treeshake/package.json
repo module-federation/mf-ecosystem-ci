@@ -1,0 +1,19 @@
+{
+  "name": "mf-ecosystem-ci-treeshake",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:server": "node scripts/server-cli.test.mjs",
+    "test:frontend": "node scripts/frontend-adapter.test.mjs",
+    "test:esm": "node scripts/esm-entrypoints.test.mjs"
+  },
+  "dependencies": {
+    "@module-federation/treeshake-frontend": "^2.9.4",
+    "@module-federation/treeshake-server": "^2.9.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "pnpm": "10.28.0"
+  }
+}

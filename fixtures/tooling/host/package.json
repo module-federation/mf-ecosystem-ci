@@ -1,0 +1,15 @@
+{
+  "name": "tooling-host",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dts": "mf dts --generate false",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node scripts/fetch-types.mjs"
+  },
+  "devDependencies": {
+    "@module-federation/cli": "^2.9.4",
+    "@module-federation/sdk": "^2.9.4",
+    "typescript": "6.0.3"
+  }
+}

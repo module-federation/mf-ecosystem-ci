@@ -1,0 +1,12 @@
+{
+  "name": "mf-fixture-devtools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter dt-remote run build && pnpm --filter dt-app run build",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}
